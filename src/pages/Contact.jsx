@@ -1,9 +1,12 @@
-import React from 'react';
+// fileName: Contact.jsx (REVISI)
+
+import React, { useState } from 'react'; // Impor useState
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ContactForm from '../components/ContactForm'; 
 import { Mail, Phone, MapPin } from 'lucide-react'; 
+import MagneticButton from '../components/MagneticButton'; // Impor MagneticButton
 
 // Varian animasi sederhana
 const fadeIn = {
@@ -19,20 +22,37 @@ const fadeIn = {
 };
 
 const Contact = () => {
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess(false);
+
+    // Simulate a delay for "sending" (dummy behavior)
+    setTimeout(() => {
+      setLoading(false);
+      setSuccess(true);
+      alert('Message sent successfully! (This is a dummy form - no real email was sent.)');
+      setForm({ name: '', email: '', message: '' }); // Reset form
+    }, 2000); // 2-second delay
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      // Menggunakan bg-neutral-900 konsisten
       className="flex min-h-screen flex-col bg-neutral-900 text-white"
     >
       <Navbar />
       
       <main className="mx-auto w-full max-w-5xl px-6 py-24 sm:py-32">
         
-        {/* --- Section 1: Header/Info Kontak (Gaya Fili/Brief) --- */}
+        {/* --- Section 1: Header/Info Kontak --- */}
         <section className="mb-24">
           <motion.h1
             variants={fadeIn}
@@ -78,7 +98,7 @@ const Contact = () => {
 
         <div className="w-full h-px bg-neutral-700 my-16"></div> 
         
-        {/* --- Section 2: Formulir Pesan (Tanpa Container, Garis Bawah) --- */}
+        {/* --- Section 2: Formulir Pesan --- */}
         <motion.section
           variants={fadeIn}
           initial="hidden"
@@ -87,23 +107,34 @@ const Contact = () => {
         >
           <h2 className="mb-12 text-5xl font-bold text-white">Send a Message</h2>
           
-          {/* Catatan: Di sini Anda perlu memastikan komponen ContactForm 
-              diatur untuk menggunakan gaya input garis bawah (misalnya, 
-              `border-b`, `focus:border-blue-500`, tanpa `border` di sisi lain, 
-              dan tanpa background input). 
-              
-              Karena saya tidak memiliki kode `ContactForm`, saya akan 
-              memasukkan placeholder untuk form dengan instruksi gaya. */}
+          {/* Form */}
+          <ContactForm 
+            onSubmit={handleSubmit} 
+            loading={loading} 
+            success={success} 
+            form={form} 
+            setForm={setForm}
+          />
           
-          <div className="w-full">
-            <ContactForm /> 
-            {/*
-              *** Catatan Gaya untuk ContactForm: ***
-              * Latar Belakang: bg-neutral-900 (transparan)
-              * Input: border-b border-neutral-700, p-4, text-xl, 
-                placeholder: text-neutral-500, focus:border-blue-500, tanpa background.
-            */}
-          </div>
+          {/* Magnetic Button sebagai Tombol Submit */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
+            className="mt-12"
+          >
+            <MagneticButton 
+              type="submit" 
+              onClick={handleSubmit} // Menggunakan onClick untuk memicu handleSubmit
+              disabled={loading}
+              // Menggunakan class yang lebih spesifik untuk tombol submit
+              className={`text-xl px-12 py-5 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {loading ? 'Sending...' : 'Send Message →'}
+            </MagneticButton>
+          </motion.div>
+          
 
         </motion.section>
         
